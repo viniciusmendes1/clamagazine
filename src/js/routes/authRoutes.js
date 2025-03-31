@@ -25,8 +25,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-module.exports = router;
-
 // Rota de logout
 router.post('/logout', (req, res) => {
     res.json({ token: null });

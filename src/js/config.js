@@ -13,3 +13,6 @@
     localStorage.setItem(THEME, urlParams.get('theme'))
   }
 })()
+module.exports = {
+  jwtSecret: 'your_jwt_secret'
+};

@@ -1,19 +1,33 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user'); // Modelo de usuário
-const checkRole = require('../middlewares/checkRole'); // Middleware de autorização
+const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
-// Rota para criar um novo usuário
-router.post('/create', checkRole('admin'), async (req, res) => {
-    const { name, email, password, role } = req.body;
+// Rota de login
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
 
     try {
-        const newUser = new User({ name, email, password, role });
-        await newUser.save();
-        res.status(201).send('Usuário criado com sucesso');
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).send('Email ou senha inválidos');
+        }
+
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(401).send('Email ou senha inválidos');
+        }
+
+        const token = jwt.sign({ id: user._id, role: user.role }, 'your_jwt_secret', { expiresIn: '1h' });
+        res.json({ token });
     } catch (error) {
-        res.status(400).send('Erro ao criar usuário: ' + error.message);
+        res.status(500).send('Erro no servidor: ' + error.message);
     }
+});
+
+// Rota de logout
+router.post('/logout', (req, res) => {
+    res.json({ token: null });
 });
 
 module.exports = router;

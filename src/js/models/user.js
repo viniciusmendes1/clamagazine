@@ -32,14 +32,14 @@ userSchema.pre('save', async function (next) {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
         next();
-    } catch (error) {
-        next(error);
+    } catch (err) {
+        next(err);
     }
 });
 
-// Compare password
-userSchema.methods.comparePassword = function (password) {
-    return bcrypt.compare(password, this.password);
+// Method to compare password
+userSchema.methods.comparePassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.models.User || mongoose.model('User', userSchema);
