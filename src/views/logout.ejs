@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+</head>
+<body>
+    <h1>Logout</h1>
+    <button id="logoutButton">Logout</button>
+
+    <script>
+        document.getElementById('logoutButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    localStorage.removeItem('token');
+                    alert('Logout realizado com sucesso');
+                } else {
+                    alert('Erro ao fazer logout');
+                }
+            } catch (error) {
+                alert('Erro ao fazer logout: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
